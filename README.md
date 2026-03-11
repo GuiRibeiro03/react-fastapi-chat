@@ -217,26 +217,6 @@ const sendMessage = (text) => {
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Here are a few ideas to extend this project:
-
-- 🔒 Add authentication (JWT tokens on WebSocket handshake)
-- 🗄️ Persist message history with a database (SQLite / PostgreSQL)
-- 🏠 Support multiple chat rooms
-- 📦 Dockerize both services with `docker-compose`
-- 🧪 Add unit tests for the `ConnectionManager`
-
-```bash
-# Fork the repo, then:
-git checkout -b feature/your-feature
-git commit -m "feat: add your feature"
-git push origin feature/your-feature
-# Open a Pull Request 🎉
-```
-
----
-
 <p align="center">
   Made with ❤️ by <a href="https://github.com/GuiRibeiro03">GuiRibeiro03</a>
 </p>
