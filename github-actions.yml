@@ -1,0 +1,62 @@
+name: Backend CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Python packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('./backend/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'  
+
+      - name: Create Virtual Environment
+        run: python3 -m venv venv
+        working-directory: ./backend
+
+      - name: Install backend dependencies
+        run: |
+          source venv/bin/activate
+          pip install -r requirements.txt  
+        working-directory: ./backend
+
+      - name: Configure DATABASE_URL securely
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL is missing" >&2
+            exit 1
+          fi
+
+      - name: Run tests with pytest
+        run: |
+          source venv/bin/activate
+          pytest tests/ --doctest-modules -q --disable-warnings
+        working-directory: ./backend  
+
+      - name: Deploy to Production
+        if: ${{ success() }}
+        run: |
+          echo "Deploying to production..."
+
+      - name: Notify on Failure
+        if: ${{ failure() }}
+        run: |
+          echo "Build failed! Sending notification..."
